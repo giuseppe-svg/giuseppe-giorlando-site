@@ -117,6 +117,9 @@ h1{font-family:'Press Start 2P',monospace;font-size:clamp(26px,6vw,80px);line-he
 .hero-photo img{width:100%;height:100%;object-fit:cover;border:4px solid var(--cyan);box-shadow:14px 14px 0 var(--mag);filter:contrast(1.1) saturate(1.2);animation:floaty 6s ease-in-out infinite}
 .hero-photo canvas{width:100%;height:100%;image-rendering:pixelated;opacity:.6;border:4px solid rgba(54,241,255,.3)}
 @keyframes floaty{50%{transform:translateY(-14px)}}
+.hero-photo canvas#pxp{opacity:1;border:4px solid var(--cyan);box-shadow:14px 14px 0 var(--mag);background:#03101f;animation:floaty 6s ease-in-out infinite;pointer-events:auto}
+.hero-photo .pxtag{position:absolute;left:0;bottom:-34px;font-family:'VT323',monospace;font-size:20px;color:var(--lime)}
+.hero-photo::after{content:"";position:absolute;inset:4px;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px);animation:floaty 6s ease-in-out infinite}
 @media(max-width:1100px){.hero-photo{position:static;transform:none;width:min(70vw,320px);margin:36px auto 0}}
 .scrolldown{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P',monospace;font-size:9px;color:var(--dim);letter-spacing:3px;animation:bob 1.4s steps(4) infinite}
 @keyframes bob{50%{transform:translate(-50%,10px)}}
@@ -350,14 +353,14 @@ footer{position:relative;z-index:3;text-align:center;padding:30px;font-family:'V
     <a class="pxbtn alt" href="https://wanderer.live/" target="_blank" rel="noopener">WANDERER</a>
     <span class="chip">IT · EN · ES · PT</span>
   </div>
-  <div class="hero-photo"><canvas id="face" aria-hidden="true"></canvas></div>
+  <div class="hero-photo"><canvas id="pxp" role="img" aria-label="Pixel art portrait of Giuseppe Giorlando"></canvas><span class="pxtag">GIUSEPPE.PNG · 1UP</span></div>
   <canvas id="shore" aria-hidden="true"></canvas>
   <div class="scrolldown">▼ DIVE IN ▼</div>
 </section>
 
 <div class="marq" aria-hidden="true"><div>
-  <span>FOUNDER</span><span>WANDERER</span><span>G2MARKET</span><span>PARTNERSHIPS</span><span>PODCASTER</span><span>AUTHOR</span><span>PSYTRANCE DJ</span><span>SURF</span><span>SCUBA</span><span>TRAVEL</span><span>SNOWBOARD</span><span>SPIRIT</span><span>OCEAN</span>
-  <span>FOUNDER</span><span>WANDERER</span><span>G2MARKET</span><span>PARTNERSHIPS</span><span>PODCASTER</span><span>AUTHOR</span><span>PSYTRANCE DJ</span><span>SURF</span><span>SCUBA</span><span>TRAVEL</span><span>SNOWBOARD</span><span>SPIRIT</span><span>OCEAN</span>
+  <span>ENTREPRENEUR</span><span>TECH</span><span>DJ</span><span>SURFER</span><span>ECOMMERCE</span><span>AI</span><span>PARTNERSHIP</span><span>WRITER</span><span>READER</span><span>DIVER</span><span>TRAVELLER</span>
+  <span>ENTREPRENEUR</span><span>TECH</span><span>DJ</span><span>SURFER</span><span>ECOMMERCE</span><span>AI</span><span>PARTNERSHIP</span><span>WRITER</span><span>READER</span><span>DIVER</span><span>TRAVELLER</span>
 </div></div>
 
 <section id="about">
@@ -608,8 +611,30 @@ ctx.globalAlpha=1;requestAnimationFrame(f)})()})();
 ctx.fillStyle='#fff';for(let x=0;x<W;x+=4){const l=L[1],y=l.o+Math.sin(x*l.f+t*l.s)*l.a+Math.sin(x*l.f*2.3-t*l.s*1.7)*l.a*.4;if(Math.sin(x*l.f+t*l.s)>.85)ctx.fillRect(x,(y|0)-2,4,2)}
 requestAnimationFrame(f)})()})();
 
+
+/* PIXEL PORTRAIT: photo resampled to a dithered neon palette, assembles from coarse to fine */
+(()=>{const cv=document.getElementById('pxp');if(!cv)return;const ctx=cv.getContext('2d');const W=96,H=120;cv.width=W;cv.height=H;ctx.imageSmoothingEnabled=false;
+const pal=[[3,16,31],[22,30,72],[90,40,140],[255,60,241],[54,241,255],[255,209,102],[240,248,255]];
+const bayer=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+const img=new Image();img.src='assets/portrait.jpg';
+img.onerror=()=>{cv.id='face';window.drawFace&&drawFace()};
+img.onload=()=>{const off=document.createElement('canvas');
+ function render(res,glitch){const w=Math.max(4,Math.round(W*res)),h=Math.max(5,Math.round(H*res));off.width=w;off.height=h;const o=off.getContext('2d');
+  const r=img.width/img.height,tr=W/H;let sw=img.width,sh=img.height,sx=0,sy=0;if(r>tr){sw=img.height*tr;sx=(img.width-sw)/2}else{sh=img.width/tr;sy=(img.height-sh)*.15}
+  o.drawImage(img,sx,sy,sw,sh,0,0,w,h);const d=o.getImageData(0,0,w,h),a=d.data;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;let l=(a[i]*.3+a[i+1]*.59+a[i+2]*.11)/255;l=Math.min(1,Math.max(0,(l-.08)*1.25));const t=bayer[(y%4)*4+x%4]/16-.5;let k=l*(pal.length-1)+t*.9;k=Math.max(0,Math.min(pal.length-1,Math.round(k)));
+   /* keep skin warm: blend toward original hue on mid tones */
+   const c=pal[k],m=(k>=3&&k<=5)?.35:.12;a[i]=c[0]*(1-m)+a[i]*m;a[i+1]=c[1]*(1-m)+a[i+1]*m;a[i+2]=c[2]*(1-m)+a[i+2]*m}
+  o.putImageData(d,0,0);ctx.clearRect(0,0,W,H);ctx.drawImage(off,0,0,w,h,0,0,W,H);
+  if(glitch){for(let n=0;n<3;n++){const gy=Math.random()*H|0,gh=2+Math.random()*6|0,dx=(Math.random()-.5)*14|0;const strip=ctx.getImageData(0,gy,W,gh);ctx.putImageData(strip,dx,gy)}ctx.fillStyle='rgba(54,241,255,.18)';ctx.fillRect(0,Math.random()*H|0,W,1)}}
+ const steps=[.06,.1,.16,.25,.4,.6,1];let i=0;
+ (function build(){render(steps[i]);if(++i<steps.length)setTimeout(build,170);else loop()})();
+ let hover=false;cv.addEventListener('mouseenter',()=>hover=true);cv.addEventListener('mouseleave',()=>hover=false);
+ function loop(){render(1,hover||Math.random()<.07);setTimeout(loop,hover?90:600)}
+};})();
+
 /* FALLBACK PIXEL FACE if portrait.jpg missing */
-window.drawFace=function(){const cv=document.getElementById('face');if(!cv)return;const ctx=cv.getContext('2d');const S=48;cv.width=S;cv.height=60;const seed=[];for(let y=0;y<60;y++){seed[y]=[];for(let x=0;x<S/2;x++){const cx=x-S/4,cy=y-24;const head=(cx*cx)/100+(cy*cy)/196<1;const body=y>44&&Math.abs(cx)<16;seed[y][x]=(head||body)?1:0}}let t=0;(function f(){t+=.02;ctx.clearRect(0,0,S,60);for(let y=0;y<60;y++)for(let x=0;x<S;x++){const sx=x<S/2?x:S-1-x;if(seed[y][sx]){const n=Math.sin(x*.6+t*2)+Math.cos(y*.5-t*1.3);ctx.fillStyle=`hsl(${(190+n*40)|0},100%,${55+n*10}%)`;ctx.fillRect(x,y,1,1)}}ctx.fillStyle='#000';ctx.fillRect(19,20,3,3);ctx.fillRect(26,20,3,3);ctx.fillRect(21,28,6,1);requestAnimationFrame(f)})()};drawFace();
+window.drawFace=function(){const cv=document.getElementById('face');if(!cv)return;const ctx=cv.getContext('2d');const S=48;cv.width=S;cv.height=60;const seed=[];for(let y=0;y<60;y++){seed[y]=[];for(let x=0;x<S/2;x++){const cx=x-S/4,cy=y-24;const head=(cx*cx)/100+(cy*cy)/196<1;const body=y>44&&Math.abs(cx)<16;seed[y][x]=(head||body)?1:0}}let t=0;(function f(){t+=.02;ctx.clearRect(0,0,S,60);for(let y=0;y<60;y++)for(let x=0;x<S;x++){const sx=x<S/2?x:S-1-x;if(seed[y][sx]){const n=Math.sin(x*.6+t*2)+Math.cos(y*.5-t*1.3);ctx.fillStyle=`hsl(${(190+n*40)|0},100%,${55+n*10}%)`;ctx.fillRect(x,y,1,1)}}ctx.fillStyle='#000';ctx.fillRect(19,20,3,3);ctx.fillRect(26,20,3,3);ctx.fillRect(21,28,6,1);requestAnimationFrame(f)})()};
 
 (()=>{const el=document.getElementById('typed'),W=['Founder @ Wanderer','Founder @ G2Market','Partnerships · Southern Europe','Podcaster','Author','Psytrance DJ · Giorlyx','Medium writer','Surfer','Scuba Diver','Snowboarder','Traveller','Christian · Anthroposophist'];let i=0,j=0,del=false;(function tick(){const w=W[i];el.textContent=w.slice(0,j);if(!del&&j<w.length){j++;setTimeout(tick,70)}else if(!del){del=true;setTimeout(tick,1500)}else if(j>0){j--;setTimeout(tick,35)}else{del=false;i=(i+1)%W.length;setTimeout(tick,300)}})()})();
 

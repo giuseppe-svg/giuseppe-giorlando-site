@@ -95,7 +95,16 @@ h1 .ink{color:var(--red)}
 .chip{font-style:italic;color:var(--ink2);border-bottom:1px dashed var(--ochre);padding:0 2px}
 .hero-art{position:relative;width:100%;max-width:520px;margin:0 auto}
 .hero-art svg{width:100%;height:auto}
-.hero-art img{position:absolute;left:50%;top:50%;width:46%;aspect-ratio:1;object-fit:cover;transform:translate(-50%,-50%);border-radius:50%;box-shadow:0 0 0 6px var(--paper),0 0 0 8px var(--ochre);filter:sepia(.25) contrast(1.05)}
+.hero-art img{display:none}
+.portrait{position:relative;width:100%;max-width:400px;margin:0 auto;aspect-ratio:4/5}
+.portrait .frame{position:absolute;inset:0;border-radius:46% 54% 50% 50%/40% 42% 58% 60%;overflow:hidden;background:var(--paper2);box-shadow:16px 20px 40px rgba(60,40,20,.25);animation:morph 14s ease-in-out infinite}
+.portrait .frame img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;filter:url(#marker2) contrast(1.05);transform:scale(1.04)}
+.portrait .frame::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 55%,rgba(239,230,211,.85) 100%)}
+.portrait svg.ring{position:absolute;inset:-6%;width:112%;height:112%;pointer-events:none}
+.portrait svg.ring path{stroke-dasharray:1600;stroke-dashoffset:1600;animation:draw 4s ease forwards .4s}
+.portrait .lotus{position:absolute;width:38%;left:-12%;bottom:-8%;z-index:2}
+.portrait .hand{position:absolute;right:-4%;bottom:-6%;transform:rotate(-6deg);font-size:18px;z-index:2}
+@keyframes morph{50%{border-radius:52% 48% 44% 56%/48% 38% 62% 52%}}
 .scrolldown{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-style:italic;color:var(--ink2);animation:bob 2.4s ease-in-out infinite;font-size:16px}
 @keyframes bob{50%{transform:translate(-50%,8px)}}
 
@@ -281,6 +290,16 @@ footer{position:relative;z-index:2;text-align:center;padding:30px;font-style:ita
       <feTurbulence type="fractalNoise" baseFrequency=".08" numOctaves="2" seed="11" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
     </filter>
+    <filter id="marker2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="1.4" result="soft"/>
+      <feColorMatrix in="soft" type="matrix" values=".9 .25 .05 0 .04  .12 .85 .1 0 .02  .08 .2 .62 0 .03  0 0 0 1 0" result="warm"/>
+      <feComponentTransfer in="warm" result="post"><feFuncR type="discrete" tableValues="0.23 0.48 0.7 0.86 0.97"/><feFuncG type="discrete" tableValues="0.18 0.4 0.6 0.8 0.93"/><feFuncB type="discrete" tableValues="0.16 0.33 0.5 0.7 0.86"/></feComponentTransfer>
+      <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="post" in2="n" scale="5" result="wob"/>
+      <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="9" result="grain"/>
+      <feColorMatrix in="grain" type="matrix" values="0 0 0 0 .92  0 0 0 0 .87  0 0 0 0 .77  0 0 0 .16 0" result="g2"/>
+      <feBlend in="wob" in2="g2" mode="multiply"/>
+    </filter>
     <filter id="marker" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
       <feGaussianBlur stdDeviation="1.2" result="soft"/>
       <feColorMatrix in="soft" type="saturate" values="1.7" result="sat"/>
@@ -326,8 +345,10 @@ footer{position:relative;z-index:2;text-align:center;padding:30px;font-style:ita
       <span class="chip">Italiano · English · Español · Português</span>
     </div>
   </div>
-  <div class="hero-art bloom in">
-    <svg viewBox="0 0 400 400" aria-hidden="true">
+  <div class="portrait bloom in">
+    <div class="frame"><img src="assets/portrait.jpg" alt="Giuseppe Giorlando, founder of Wanderer and G2Market" width="1179" height="1352" fetchpriority="high"></div>
+    <svg class="ring" viewBox="0 0 400 500" aria-hidden="true"><path d="M200 18 C310 14 384 110 382 250 C380 390 300 484 196 482 C90 480 18 392 20 250 C22 108 92 22 200 18Z" fill="none" stroke="#7a2e2e" stroke-width="2" filter="url(#ink)"/><path d="M204 30 C300 30 370 120 368 252 C366 380 292 470 198 468" fill="none" stroke="#c7873c" stroke-width="1.2" stroke-dasharray="4 7" filter="url(#ink)"/></svg>
+    <div class="lotus"><svg viewBox="0 0 400 400" aria-hidden="true">
       <g class="wc-fill" filter="url(#wc)">
         <g class="petal" style="animation-delay:.1s"><path d="M200 60 C150 110 150 170 200 200 C250 170 250 110 200 60Z" fill="url(#gRed)" opacity=".9"/></g>
         <g class="petal" style="animation-delay:.3s"><path d="M340 200 C290 150 230 150 200 200 C230 250 290 250 340 200Z" fill="url(#gRed)" opacity=".9"/></g>
@@ -345,14 +366,15 @@ footer{position:relative;z-index:2;text-align:center;padding:30px;font-style:ita
         <path d="M150 150 H250 V250 H150Z" stroke="#9b5a2a"/>
         <path d="M165 165 H235 L200 235Z" fill="#b83a3a" fill-opacity=".85" stroke="#7a2e2e"/>
       </g>
-    </svg>
+    </svg></div>
+    <div class="hand">ciao, I'm Giuseppe</div>
   </div>
   <div class="scrolldown">scroll, like a tide ↓</div>
 </section>
 
 <div class="ribbon" aria-hidden="true"><div>
-  <span>Founder</span><span>Wanderer</span><span>G2Market</span><span>Partnerships</span><span>Podcaster</span><span>Author</span><span>Psytrance DJ</span><span>Surf</span><span>Scuba</span><span>Travel</span><span>Snowboard</span><span>Spirit</span><span>Ocean</span>
-  <span>Founder</span><span>Wanderer</span><span>G2Market</span><span>Partnerships</span><span>Podcaster</span><span>Author</span><span>Psytrance DJ</span><span>Surf</span><span>Scuba</span><span>Travel</span><span>Snowboard</span><span>Spirit</span><span>Ocean</span>
+  <span>Entrepreneur</span><span>Tech</span><span>DJ</span><span>Surfer</span><span>eCommerce</span><span>AI</span><span>Partnership</span><span>Writer</span><span>Reader</span><span>Diver</span><span>Traveller</span>
+  <span>Entrepreneur</span><span>Tech</span><span>DJ</span><span>Surfer</span><span>eCommerce</span><span>AI</span><span>Partnership</span><span>Writer</span><span>Reader</span><span>Diver</span><span>Traveller</span>
 </div></div>
 
 <section id="about">
