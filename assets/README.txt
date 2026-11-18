@@ -1,1 +1,1 @@
-og.png: 1200x630 social preview (GG logo). icon-512.png / apple-touch-icon.png: app icons. surf.jpg, scuba.jpg: photos used in the opening scene and in the Passions section. dj.jpg: Passions section.
+og.png: 1200x630 social preview (GG logo). icon-512.png / apple-touch-icon.png: app icons. dj-hero.jpg (dj.jpg without the top strip) and scuba.jpg: opening scene. dj.jpg, scuba.jpg: Passions section. surf.jpg: not used on the page any more.
